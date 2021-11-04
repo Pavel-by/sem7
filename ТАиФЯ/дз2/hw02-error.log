@@ -1,0 +1,8 @@
+return {
+ ["filename"]="F:/University/7_semester/ТАиФЯ/дз2/hw02.tex",
+ ["lastcontext"]="\nl.1 \\documentclass\n                 [12pt,a4paper]{article}%",
+ ["lastluaerror"]="?",
+ ["lasttexerror"]="! Undefined control sequence",
+ ["linenumber"]=1,
+ ["offset"]=10,
+}
