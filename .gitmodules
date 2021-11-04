@@ -1,0 +1,3 @@
+[submodule "НРБД/repo"]
+	path = НРБД/repo
+	url = git@github.com:moevm/nosql2h21-cats-memecached.git
