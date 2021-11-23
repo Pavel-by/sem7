@@ -1,0 +1,192 @@
+\documentclass[12pt,a4paper]{article}%
+\usepackage{amsthm}
+\usepackage{amsmath}%
+\usepackage{amsfonts}%
+\usepackage{amssymb}%
+\usepackage{graphicx}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage[linguistics]{forest}
+%-------------------------------------------
+\setlength{\textwidth}{7.0in}
+\setlength{\oddsidemargin}{-0.35in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\textheight}{9.0in}
+\setlength{\parindent}{0.3in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{task}[theorem]{Задача}
+\addto\captionsrussian{\renewcommand*{\proofname}{Решение}}
+
+
+\newcommand{\abovemath}[2]{\ensuremath{\stackrel{\text{#1}}{#2}}}
+\newcommand{\aboveeq}[1]{\abovemath{#1}{=}}
+\newcommand\bydef{\aboveeq{def}}
+\begin{document}
+
+
+\begin{flushright}
+\textbf{Мирончик Павел, 8382 \\
+\today}
+\end{flushright}
+
+\begin{center}
+\textbf{Формальные языки\\
+HW03 \\
+Дедлайн: 23:59 15 ноября 2021} \\
+\end{center}
+
+\task{
+    Привести однозначную контекстно-свободную грамматику для языка арифметических выражений над положительными целыми \emph{числами} с операциями \verb!+!, \verb!-!, \verb!*!, \verb!/!, \verb!^!, \verb!==!,\verb!<>!, \verb!<!, \verb!<=!, \verb!>!, \verb!>=! со следующими приоритетами и ассоциативностью:
+
+  \begin{center}
+    \begin{tabular}{ c | c }
+      Наибольший приоритет & Ассоциативность  \\ \hline \hline
+      \verb!^! & Правоассоциативна \\
+     \verb!*!,\verb!/! & Левоассоциативна \\
+     \verb!+!,\verb!-! & Левоассоциативна \\
+     \verb!==!,\verb!<>!, \verb!<!,\verb!<=!, \verb!>!,\verb!>=! & Неассоциативна \\ \hline \hline
+     Наименьший приоритет & Ассоциативность
+    \end{tabular}
+    \end{center}
+
+
+    Неассоциативные операции встречаются только один раз: \verb!1 == 2! -- корректная строка, \verb!1 == 2 == 3!, \verb!(1 == 2) == 3!, \verb!1 < 2 > 3! --- некорректные строки
+  }
+
+\begin{proof}
+  Отметим, что логические операции сравнения встречаются только один раз. Это означает, что они должны присутствовать 
+  в единственном экземпляре, и слова без них считаются невалидными.
+
+  \begin{center}
+    \begin{align*}
+      S &\to ABA \\
+      B &\to \text{==} \mid \text{<>} \mid \text{<} \mid \text{<=} \mid \text{>} \mid \text{>=} \\
+      A &\to (A) \mid AOA \mid N \\
+      O &\to + \mid - \mid * \mid / \mid {^\land} \\
+      N &\to 0 \mid 1 N_f \mid 2 N_f \mid 3 N_f \mid 4 N_f \mid 5 N_f \mid 6 N_f \mid 7 N_f \mid 8 N_f \mid 9 N_f \\
+      N_f &\to N \mid 0 N_f \mid \varepsilon \\
+    \end{align*}
+  \end{center}
+\end{proof}
+
+\task {Привести грамматику из 1 задания в нормальную форму Хомского.}
+
+\begin{proof}
+  \leavevmode 
+  \begin{center}
+    \begin{align*}
+      V_N &= S, A, B, O, N_f, D_*, C_*\\
+      V_T &= 0 \ldots 9, {=}, {<}, {>}, +, -, *, /, {^\land}, {(}, {)}\\
+      S &= S\\
+      \\
+      S &\to A D_1\\
+      D_1 &\to B A\\
+      B &\to C_{=} C_{=} \mid C_{<} C_{>} \mid {<} \mid C_{<} C_{=} \mid {>} \mid C_{>} C_{=}\\
+      A &\to C_{(} D_2 \mid A D_3\\
+      D_2 &\to A C_)\\
+      D_3 &\to O A\\
+      O &\to {+} \mid {-} \mid {*} \mid {/} \mid {^\land}\\
+      A &\to 0 \mid C_1 N_f \mid C_2 N_f \mid \cdots \mid C_9 N_f\\
+      N_f &\to C_0 N_f \mid C_1 N_f \mid \cdots \mid C_9 N_f \mid \varepsilon\\
+      \forall x: C_x &\to x\\
+    \end{align*}
+  \end{center}
+\end{proof}
+
+\task {Промоделировать работу алгоритма CYK на грамматике из 2 задания на трех корректных строках не короче 7 символов и на трех некорректных строках. (Привести таблицы и деревья вывода)}
+
+\begin{center}
+
+\begin{center}
+  
+  \textbf{1. $1+12>3{^\land}10$ - входит} \bigskip
+
+  \begin{tabular}{c|c|c|c|c|c|c|c|c}
+    1&2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\ \hline
+    1&+&1&2&>&3&$^\land$&1&0 
+  \end{tabular}\bigskip
+
+  \begin{tabular}{c || c | c | c | c | c | c | c | c | c | }
+      &1    &2    &3    &4    &5    &6    &7    &8    &9    \\  \hline \hline
+    1 &$C_1|A$&$\varnothing$&$A$&$A$&$\varnothing$&$S$&$\varnothing$&$S$&$S$\\  \hline
+    2 &&$O$&$D_3$&$D_3$&$\varnothing$&$\varnothing$&$\varnothing$&$\varnothing$&$\varnothing$\\  \hline
+    3 &&&$C_1|A$&$A|N_f$&$\varnothing$&$S$&$\varnothing$&$S$&$S$\\  \hline
+    4 &&&&$C_2|A$&$\varnothing$&$S$&$\varnothing$&$S$&$S$\\  \hline
+    5 &&&&&$C_>|B$&$D_1$&$\varnothing$&$D_1$&$D_1$\\  \hline
+    6 &&&&&&$C_3|A$&$\varnothing$&$A$&$A$\\  \hline
+    7 &&&&&&&$O$&$D_3$&$D_3$\\  \hline
+    8 &&&&&&&&$C_1|A$&$A$\\  \hline
+    9 &&&&&&&&&$C_0|A$\\  \hline
+  \end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{center}
+  \begin{forest}
+    [S
+      [A
+        [A
+          [$C_1$ [1]]
+          [$N_f$ [$\varnothing$]]
+        ]
+        [$D_3$
+          [O [+]]
+          [A 
+            [$C_1$ [1]]
+            [$N_f$ 
+              [$C_2$ [2]]
+              [$N_f$ [$\varnothing$]]
+            ]
+          ]
+        ]
+      ]
+      [$D_1$
+        [$B$ [>]]
+        [A
+          [A
+            [$C_3$ [3]]
+            [$N_f$ [$\varnothing$]]
+          ]
+          [$D_3$
+            [O [$^\land$]]
+            [A
+              [$C_1$ [1]]
+              [$N_f$ [$C_0$ [0]] [$N_f$ [$\varnothing$]]]
+            ]
+          ]
+        ]
+      ]
+    ]
+  \end{forest}
+\end{center}
+\bigskip
+  
+\textbf{2. $(1) == 0 * 0$ - входит} \bigskip
+
+\begin{tabular}{c|c|c|c|c|c|c|c|c}
+  1&2 & 3 & 4 & 5 & 6 & 7 & 8 \\ \hline
+  (&1&)&=&=&0&*&0 
+\end{tabular}\bigskip
+
+\begin{tabular}{c || c | c | c | c | c | c | c | c | }
+    &1    &2    &3    &4    &5    &6    &7    &8    \\  \hline \hline
+  1 &$C_($&$\varnothing$&$A$&$\varnothing$&$\varnothing$&$S$&$\varnothing$&$S$ \\ \hline
+  2 &&$C_1|N_f|A$&$D_2$&$\varnothing$&$\varnothing$&$\varnothing$&$\varnothing$&$\varnothing$ \\ \hline
+  3 &&&$C_)$&$\varnothing$&$\varnothing$&$\varnothing$&$\varnothing$&$\varnothing$ \\ \hline
+  4 &&&&$C_=$&$B$&$D_1$&$\varnothing$&$D_1$ \\ \hline
+  5 &&&&&$C_=$&$\varnothing$&$\varnothing$&$\varnothing$ \\ \hline
+  6 &&&&&&$C_0|N_f|A$&$\varnothing$&$A$ \\ \hline
+  7 &&&&&&&$O$&$D_3$ \\ \hline
+  8 &&&&&&&&$C_0|N_f|A$\\ \hline
+\end{tabular}
+\end{center}
+\bigskip
+  
+...аналогичное дерево для этого примера, аналогичные таблицы для неверных примеров вроде $"1+2*3^\land4"$, за исключением 
+того, что верхний левый элемент таблицы мы не сможем вывести из какой-либо пары предыдущих, поэтому слово не подойдет языку.
+
+
+\end{document}
